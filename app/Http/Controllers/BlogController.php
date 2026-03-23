@@ -26,12 +26,14 @@ class BlogController extends Controller
         $validated = $request->validate([
             'title' => 'required|string|max:255',
             'content' => 'required|string',
+            'image' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
         ]);
         
         $blog = Blog::create([
             'title' => $validated['title'],
             'content' => $validated['content'],
             'user_id' => $request->user()->id,
+            'image' => $validated['image'],
         ]);
 
         // Reload with user relationship
@@ -49,7 +51,11 @@ class BlogController extends Controller
      */
     public function show(Blog $blog)
     {
-        return response()->json($blog, 200);
+        $comments = $blog->comments()->paginate(20); // paginate comments
+        return response()->json([
+            'blog' => $blog->load('user')->loadCount('comments'),
+            'comments' => $comments,
+        ], 200);
     }
 
     /**
@@ -61,11 +67,13 @@ class BlogController extends Controller
         $validated = $request->validate([
             'title' => 'required|string|max:255',
             'content' => 'required|string',
+            'image' => 'nullable|string'
         ]);
 
         $blog->update([
             'title'=> $validated['title'],
             'content'=> $validated['content'],
+            'image'=> $validated['image'],
         ]);
 
         return response()->json([
@@ -85,5 +93,15 @@ class BlogController extends Controller
             'message' => "Blog deleted successfully",
             'blog'=> $blog
         ], 200);
+    }
+
+
+    public function upload(Request $request)
+    {
+        if ($request->hasFile('image')) {
+            $path = $request->file('image')->store('uploads', 'public');
+            return response()->json(['url' => asset('storage/'.$path)]);
+        }
+        return response()->json(['error' => 'No file uploaded'], 400);
     }
 }

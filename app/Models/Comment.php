@@ -13,11 +13,16 @@ class Comment extends Model
 
     protected $fillable = [
         'content',
-        'blog_id'
+        'blog_id',
+        'user_id'
     ];
 
     public function blog(): BelongsTo
     {
         return $this->belongsTo(Blog::class, 'blog_id');
+    }
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'user_id');
     }
 }

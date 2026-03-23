@@ -15,6 +15,7 @@ class Blog extends Model
         'title',
         'content',
         'user_id',
+        'image',
     ];
 
     //Blog is always belongs to user
