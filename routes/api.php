@@ -25,7 +25,6 @@ Route::middleware('auth:api')->group(function () {
     Route::get('/blogs', [BlogController::class, 'index']);
     Route::put('/blogs/{blog}', [BlogController::class, 'update']);
     Route::delete('/blogs/{blog}', [BlogController::class, 'destroy']);
-
     Route::apiResource('blogs.comments', CommentController::class);
 });
 

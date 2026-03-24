@@ -15,8 +15,7 @@ class CommentController extends Controller
     {
         $comments = $blog->comments()
                         ->with('user')   // eager load user data
-                        ->latest()
-                        ->paginate(20);  // paginate to avoid loading thousands
+                        ->paginate(5);  // paginate to avoid loading thousands
 
         return response()->json($comments);
     }
@@ -39,7 +38,7 @@ class CommentController extends Controller
             'blog_id' => $validated['blog_id'],
             'user_id' => $validated['user_id'],
         ]);
-
+        $comment->load('user');
         // Return JSON response
         return response()->json([
             'message' => 'Comment created successfully',
@@ -68,6 +67,11 @@ class CommentController extends Controller
      */
     public function destroy(Comment $comment)
     {
-        //
+        $comment->update(['deleted' => true]);
+
+        return response()->json([
+            'message' => "Comment deleted successfully",
+            'comment' => $comment
+        ], 200);
     }
 }
