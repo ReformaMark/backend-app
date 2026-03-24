@@ -13,12 +13,22 @@ class CommentController extends Controller
      */
     public function index(Blog $blog)
     {
+        // Paginate all comments (including deleted ones)
         $comments = $blog->comments()
-                        ->with('user')   // eager load user data
-                        ->paginate(5);  // paginate to avoid loading thousands
+            ->with('user')
+            ->paginate(5);
+
+        // Count only non-deleted comments for pagination total
+        $activeCount = $blog->comments()
+            ->where('deleted', false)
+            ->count();
+
+        // Replace the total in the paginator
+        $comments->total($activeCount);
 
         return response()->json($comments);
     }
+
 
     /**
      * Store a newly created resource in storage.

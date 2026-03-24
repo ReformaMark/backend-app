@@ -20,12 +20,12 @@ Route::get('/fetch-user', [AuthController::class, 'index']);
 //Blogs Routes
 Route::middleware('auth:api')->group(function () {
     Route::post('/blogs', [BlogController::class, 'store']);
-    Route::post('/upload', [BlogController::class, 'upload']);
     Route::get('/blogs/{blog}', [BlogController::class, 'show']);
     Route::get('/blogs', [BlogController::class, 'index']);
     Route::put('/blogs/{blog}', [BlogController::class, 'update']);
     Route::delete('/blogs/{blog}', [BlogController::class, 'destroy']);
     Route::apiResource('blogs.comments', CommentController::class);
+    Route::post('/upload', [BlogController::class, 'upload']);
 });
 
 //Branch Routes

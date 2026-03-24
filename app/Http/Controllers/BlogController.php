@@ -12,12 +12,12 @@ class BlogController extends Controller
      */
     public function index()
     {
-        $blogs = Blog::with('user')
+        $blogs = Blog::with('user')            
                     ->withCount('comments')
-                    ->get();
-
+                    ->latest()
+                    ->paginate(6);          
         return response()->json($blogs);
-    }
+    } 
     /**
      * Store a newly created resource in storage.
      */
@@ -49,15 +49,12 @@ class BlogController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Blog $blog)
+   public function show(Blog $blog)
     {
-        $comments = $blog->comments()->paginate(20); // paginate comments
-        return response()->json([
-            'blog' => $blog->load('user')->loadCount('comments'),
-            'comments' => $comments,
-        ], 200);
+        // Eager load the user relationship
+        $blog->load('user');
+        return response()->json($blog);
     }
-
     /**
      * Update the specified resource in storage.
      */
