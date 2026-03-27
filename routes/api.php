@@ -24,8 +24,10 @@ Route::middleware('auth:api')->group(function () {
     Route::get('/blogs', [BlogController::class, 'index']);
     Route::put('/blogs/{blog}', [BlogController::class, 'update']);
     Route::delete('/blogs/{blog}', [BlogController::class, 'destroy']);
-    Route::apiResource('blogs.comments', CommentController::class);
+    Route::apiResource('blogs.comments', CommentController::class)
+        ->scoped();
     Route::post('/upload', [BlogController::class, 'upload']);
+    // Route::put('/comments/{comment}', [CommentController::çlass, 'update']);
 });
 
 //Branch Routes

@@ -10,12 +10,18 @@ class BlogController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
-    {
+    public function index(Request $request)
+    {   
+        $search = $request->get('search', "");        // default 6 rows per page
+        $perPage = $request->get('per_page', 6);        // default 6 rows per page
+        $page = $request->get('page', 1);              // default page 1
+        $sortBy = $request->get('sort_by', 'created_at'); // default sort column
+        $sortDesc = $request->get('sort_desc', true);   // default descending
+        
         $blogs = Blog::with('user')            
-                    ->withCount('comments')
-                    ->latest()
-                    ->paginate(6);          
+                ->withCount('comments')
+                ->orderBy($sortBy, $sortDesc === true ? 'desc' : 'asc')
+                ->paginate($perPage);         
         return response()->json($blogs);
     } 
     /**
