@@ -78,6 +78,8 @@ class CommentController extends Controller
             'content' => $validated['content'],
         ]);
 
+        $comment->load('user');
+
         return response()->json([
             'message' => 'Blog updated successfully',
             'comment'=> $comment,
