@@ -12,14 +12,20 @@ class BlogController extends Controller
      */
     public function index(Request $request)
     {   
-        $search = $request->get('search', "");        // default 6 rows per page
+        $search = $request->get('search', "");        // default ""
         $perPage = $request->get('per_page', 6);        // default 6 rows per page
         $page = $request->get('page', 1);              // default page 1
         $sortBy = $request->get('sort_by', 'created_at'); // default sort column
-        $sortDesc = $request->get('sort_desc', true);   // default descending
+        $sortDesc = $request->get('sort_desc', false);   // default descending
         
         $blogs = Blog::with('user')            
                 ->withCount('comments')
+                ->when($search, function ($query) use ($search) { 
+                    $query->where(function ($q) use ($search) {
+                        $q->where('title', 'like', "%{$search}%")
+                        ->orWhere('content', 'like', "%{$search}%");
+                        });
+                })
                 ->orderBy($sortBy, $sortDesc === true ? 'desc' : 'asc')
                 ->paginate($perPage);         
         return response()->json($blogs);
