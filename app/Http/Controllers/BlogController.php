@@ -16,7 +16,7 @@ class BlogController extends Controller
         $perPage = $request->get('per_page', 6);        // default 6 rows per page
         $page = $request->get('page', 1);              // default page 1
         $sortBy = $request->get('sort_by', 'created_at'); // default sort column
-        $sortDesc = $request->get('sort_desc', false);   // default descending
+        $sortDesc = $request->get('sort_desc', 'desc');   // default descending
         
         $blogs = Blog::with('user')            
                 ->withCount('comments')
@@ -26,7 +26,7 @@ class BlogController extends Controller
                         ->orWhere('content', 'like', "%{$search}%");
                         });
                 })
-                ->orderBy($sortBy, $sortDesc === true ? 'desc' : 'asc')
+                ->orderBy($sortBy, $sortDesc)
                 ->paginate($perPage);         
         return response()->json($blogs);
     } 
