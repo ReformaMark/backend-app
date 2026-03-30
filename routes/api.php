@@ -16,18 +16,22 @@ Route::middleware('auth:api')->post('/logout', [AuthController::class, 'logout']
 
 
 Route::get('/fetch-user', [AuthController::class, 'index']);
+// Route::post('/blogs', [BlogController::class, 'store']);
+// Route::get('/blogs/{blog}', [BlogController::class, 'show']);
+// Route::get('/blogs', [BlogController::class, 'index']);
+// Route::put('/blogs/{blog}', [BlogController::class, 'update']);
+// Route::delete('/blogs/{blog}', [BlogController::class, 'destroy']);
 
 //Blogs Routes
 Route::middleware('auth:api')->group(function () {
-    Route::post('/blogs', [BlogController::class, 'store']);
-    Route::get('/blogs/{blog}', [BlogController::class, 'show']);
-    Route::get('/blogs', [BlogController::class, 'index']);
-    Route::put('/blogs/{blog}', [BlogController::class, 'update']);
-    Route::delete('/blogs/{blog}', [BlogController::class, 'destroy']);
-    Route::apiResource('blogs.comments', CommentController::class)
-        ->scoped();
+    Route::apiResource('blogs', BlogController::class);
+    Route::apiResource('blogs.comments', CommentController::class)->scoped();
     Route::post('/upload', [BlogController::class, 'upload']);
-    // Route::put('/comments/{comment}', [CommentController::çlass, 'update']);
+});
+
+//comments routes
+Route::middleware('auth:api')->group(function () {
+    Route::apiResource('comments', CommentController::class);
 });
 
 //Branch Routes
@@ -41,6 +45,3 @@ Route::middleware('auth:api')->prefix('branches')->group(function () {
 });
 
 
-Route::middleware('auth:api')->group(function () {
-    Route::apiResource('comments', CommentController::class);
-});
